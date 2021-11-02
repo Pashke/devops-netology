@@ -12,3 +12,6 @@
 Игнорировать файлы override.tf и override.tf.json, также содержащие на конце _override.tf и _override.tf.json
 6. `.terraformrc` `terraform.rc`  
 Игнорировать файлы с расширением .terraformrc и файл terraform.rc
+
+Новая строка для задания №3 - Ветки   
+Задание №4 - Упрощаем жизнь
