@@ -31,8 +31,8 @@
 так `func providerSource(...)` (вместо троеточего перечислены аргументы).
 > 8c928e83589d90a031f811fae52a81be7153e82f
 6. Найдите все коммиты в которых была изменена функция `globalPluginDirs`.
-> 35a058fb3 main: configure credentials from the CLI config file
-> c0b176109 prevent log output during init
+> 35a058fb3 main: configure credentials from the CLI config file  
+> c0b176109 prevent log output during init  
 > 8364383c3 Push plugin discovery down into command package
 7. Кто автор функции `synchronizedWriters`?
 > Author: Martin Atkins <mart@degeneration.co.uk>
