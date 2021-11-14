@@ -1,46 +1,101 @@
-# Домашнее задание к занятию «2.4. Инструменты Git»
+# Домашнее задание к занятию "3.1. Работа в терминале, лекция 1"
 
-Для выполнения заданий в этом разделе давайте склонируем репозиторий с исходным кодом 
-терраформа https://github.com/hashicorp/terraform 
+1. Установите средство виртуализации [Oracle VirtualBox](https://www.virtualbox.org/).
+> `+`
+2. Установите средство автоматизации [Hashicorp Vagrant](https://www.vagrantup.com/).
+> `+`
+3. В вашем основном окружении подготовьте удобный для дальнейшей работы терминал. Можно предложить:
 
-В виде результата напишите текстом ответы на вопросы и каким образом эти ответы были получены. 
+	* iTerm2 в Mac OS X
+	* Windows Terminal в Windows
+	* выбрать цветовую схему, размер окна, шрифтов и т.д.
+	* почитать о кастомизации PS1/применить при желании.
 
-1. Найдите полный хеш и комментарий коммита, хеш которого начинается на `aefea`.  
-> `git log aefea`
->> хеш: aefead2207ef7e2aa5dc81a34aedf0cad4c32545  
->> комментарий: Update CHANGELOG.md
-2. Какому тегу соответствует коммит `85024d3`?  
->`git show 85024d3`
->> tag: v0.12.23
-3. Сколько родителей у коммита `b8d720`? Напишите их хеши.  
->`git log b8d720 --decorate --graph`
->> 2 родителя  
->> Merge: 56cd7859e 9ea88f22f  
->> 56cd7859e05c36c06b56d013b55a252d0bb7e158  
->> 9ea88f22fc6269854151c571162c5bcf958bee2b
-4. Перечислите хеши и комментарии всех коммитов которые были сделаны между тегами  v0.12.23 и v0.12.24.  
->`git log v0.12.23..v0.12.24 --oneline`
->> 33ff1c03b (tag: v0.12.24) v0.12.24  
->> b14b74c49 [Website] vmc provider links  
->> 3f235065b Update CHANGELOG.md  
->> 6ae64e247 registry: Fix panic when server is unreachable  
->> 5c619ca1b website: Remove links to the getting started guide's old location  
->> 06275647e Update CHANGELOG.md  
->> d5f9411f5 command: Fix bug when using terraform login on Windows  
->> 4b6d06cc5 Update CHANGELOG.md  
->> dd01a3507 Update CHANGELOG.md  
->> 225466bc3 Cleanup after v0.12.23 release
-5. Найдите коммит в котором была создана функция `func providerSource`, ее определение в коде выглядит 
-так `func providerSource(...)` (вместо троеточего перечислены аргументы).  
->`git log -S "func providerSource("`
->> 8c928e83589d90a031f811fae52a81be7153e82f
-6. Найдите все коммиты в которых была изменена функция `globalPluginDirs`.
-> `git log -L :globalPluginDirs:plugins.go`
->> 78b12205587fe839f10d946ea3fdc06719decb05  
->> 52dbf94834cb970b510f2fba853a5b49ad9b1a46  
->> 41ab0aef7a0fe030e84018973a64135b11abcd70  
->> 66ebff90cdfaa6938f26f908c7ebad8d547fea17  
->> 8364383c359a6b738a436d1b7745ccdce178df47  
-7. Кто автор функции `synchronizedWriters`?
-> `git log -S "synchronizedWriters"`
->> Author: Martin Atkins <mart@degeneration.co.uk>
+	Несколько популярных проблем:
+    * Добавьте Vagrant в правила исключения перехватывающих трафик для анализа антивирусов, таких как Kaspersky, если
+у вас возникают связанные с SSL/TLS ошибки,
+    * MobaXterm может конфликтовать с Vagrant в Windows,
+    * Vagrant плохо работает с директориями с кириллицей (может быть вашей домашней директорией), тогда можно либо 
+изменить [VAGRANT_HOME](https://www.vagrantup.com/docs/other/environmental-variables#vagrant_home), либо создать в 
+системе профиль пользователя с английским именем,
+    * VirtualBox конфликтует с Windows Hyper-V и его необходимо 
+[отключить](https://www.vagrantup.com/docs/installation#windows-virtualbox-and-hyper-v),
+    * [WSL2](https://docs.microsoft.com/ru-ru/windows/wsl/wsl2-faq#does-wsl-2-use-hyper-v-will-it-be-available-on-windows-10-home) 
+использует Hyper-V, поэтому с ним VirtualBox также несовместим,
+    * аппаратная виртуализация (Intel VT-x, AMD-V) должна быть активна в BIOS,
+    * в Linux при установке [VirtualBox](https://www.virtualbox.org/wiki/Linux_Downloads) может дополнительно 
+потребоваться пакет `linux-headers-generic` (debian-based) / `kernel-devel` (rhel-based).
+> Поставил "Windows Terminal в Windows". Много времени потратил на разбор, как запустить вагрант. Команда по отключению 
+> Hyper-V из ссылки не помогла, также нужных чек боксов не нашел в "Программы и компоненты". 
+> Можно добавить на будущее другим студентам команду `bcdedit /set hypervisorlaunchtype off`, выполнять в PowerShell 
+> под админом
+4. С помощью базового файла конфигурации запустите Ubuntu 20.04 в VirtualBox посредством Vagrant:
+
+    * Создайте директорию, в которой будут храниться конфигурационные файлы Vagrant. В ней выполните `vagrant init`. 
+Замените содержимое Vagrantfile по умолчанию следующим:
+
+        ```bash
+        Vagrant.configure("2") do |config|
+            config.vm.box = "bento/ubuntu-20.04"
+        end
+        ```
+
+    * Выполнение в этой директории `vagrant up` установит провайдер VirtualBox для Vagrant, скачает необходимый образ и
+запустит виртуальную машину.
+
+    * `vagrant suspend` выключит виртуальную машину с сохранением ее состояния (т.е., при следующем `vagrant up` будут 
+запущены все процессы внутри, которые работали на момент вызова suspend), `vagrant halt` выключит виртуальную машину 
+штатным образом.
+> `+`
+5. Ознакомьтесь с графическим интерфейсом VirtualBox, посмотрите как выглядит виртуальная машина, которую создал для 
+вас Vagrant, какие аппаратные ресурсы ей выделены. Какие ресурсы выделены по-умолчанию?
+> 1024 мб оперативки.  
+> Написано что 2 процессора, но так понимаю одно ядро в два потока
+6. Ознакомьтесь с возможностями конфигурации VirtualBox через Vagrantfile: 
+[документация](https://www.vagrantup.com/docs/providers/virtualbox/configuration.html). 
+Как добавить оперативной памяти или ресурсов процессора виртуальной машине?
+>```
+>config.vm.provider "virtualbox" do |v|
+>  v.memory = 1024
+>  v.cpus = 2
+>end
+>```
+7. Команда `vagrant ssh` из директории, в которой содержится Vagrantfile, позволит вам оказаться внутри виртуальной 
+машины без каких-либо дополнительных настроек. Попрактикуйтесь в выполнении обсуждаемых команд в терминале Ubuntu.
+> `+`
+8. Ознакомиться с разделами `man bash`, почитать о настройках самого bash:
+    * какой переменной можно задать длину журнала `history`, и на какой строчке manual это описывается?
+    * что делает директива `ignoreboth` в bash?
+> `HISTSIZE` на 2045 строке описание команды `history`. Ну либо можно найти уже `histsize` на строке 556.  
+> A value of ignoreboth is shorthand for ignorespace and ignoredups. ignorespace - не записывать в историю команды 
+начинающиеся с пробела. ignoredups - не сохранять повторяющиеся команды.
+9. В каких сценариях использования применимы скобки `{}` и на какой строчке `man bash` это описано?
+> 182 строка `{ list; }`. Судя по следующему заданию нужно найти Brace Expansion, тогда со строки 698. 
+> Позволяет сократить команды.
+10. С учётом ответа на предыдущий вопрос, как создать однократным вызовом `touch` 100000 файлов? Получится ли аналогичным
+образом создать 300000? Если нет, то почему?
+> `touch {1..100000}.txt`. Этим же способом 300к не создать, ошибка превышения количества аргументов.  
+> Но можно в цикле создать `for i in {1..3}; do rm "$i"{1..100000}; done`
+11. В man bash поищите по `/\[\[`. Что делает конструкция `[[ -d /tmp ]]`
+> Проверяет существует ли директория /tmp. Смог проверить так `if [[ -d /tmp ]]; then echo True; fi`
+12. Основываясь на знаниях о просмотре текущих (например, PATH) и установке новых переменных; командах, которые мы 
+рассматривали, добейтесь в выводе type -a bash в виртуальной машине наличия первым пунктом в списке:
+
+    ```bash
+    bash is /tmp/new_path_directory/bash
+    bash is /usr/local/bin/bash
+    bash is /bin/bash
+    ```
+
+    (прочие строки могут отличаться содержимым и порядком)
+    В качестве ответа приведите команды, которые позволили вам добиться указанного вывода или соответствующие скриншоты.
+> ```
+> mkdir /tmp/new_path_directory
+> cp /bin/bash /tmp/new_path_directory/bash
+> export PATH="/tmp/new_path_directory:$PATH"
+> type -a bash
+> ```
+13. Чем отличается планирование команд с помощью `batch` и `at`?
+> `at` запуск задания в определенное время, `batch` - запуск задания при снижении нагрузки системы
+14. Завершите работу виртуальной машины чтобы не расходовать ресурсы компьютера и/или батарею ноутбука.
+> `+`
