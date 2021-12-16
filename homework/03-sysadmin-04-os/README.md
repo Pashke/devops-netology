@@ -5,12 +5,29 @@
     * поместите его в автозагрузку,
     * предусмотрите возможность добавления опций к запускаемому процессу через внешний файл (посмотрите, например, на `systemctl cat cron`),
     * удостоверьтесь, что с помощью systemctl процесс корректно стартует, завершается, а после перезагрузки автоматически поднимается.
+> unit-файл:
+> ```bash
+> [Unit]
+> Description=Test node exporter
+> After=network.target
+> 
+> [Service]
+> Type=simple
+> Restart=always
+> User=vagrant
+> Group=vagrant
+> EnvironmentFile=/etc/default/node_exporter
+> ExecStart=/usr/local/bin/node_exporter $ARGS
+> 
+> [Install]
+> WantedBy=multi-user.target
+> ```
 > После перезапуска виртуалки:
 > ![](../../picture/homework_3.4/3.4.1.png)
 2. Ознакомьтесь с опциями node_exporter и выводом `/metrics` по-умолчанию. Приведите несколько опций, которые вы бы выбрали для базового мониторинга хоста по CPU, памяти, диску и сети.
 > метрик очень много, пусть будут эти.  
 > CPU:
-> ```
+> ```bash
 > node_cpu_seconds_total{cpu="0",mode="idle"} 379612.3
 > node_cpu_seconds_total{cpu="0",mode="iowait"} 0.76
 > node_cpu_seconds_total{cpu="0",mode="irq"} 0
@@ -29,12 +46,12 @@
 > node_cpu_seconds_total{cpu="1",mode="user"} 4.49
 > ```
 > Память:
-> ```
+> ```bash
 > node_memory_MemTotal_bytes 1.028694016e+09
 > node_memory_MemFree_bytes 6.05376512e+08
 > ```
 > Диск:
-> ```
+> ```bash
 > node_filesystem_free_bytes{device="/dev/mapper/vgvagrant-root",fstype="ext4",mountpoint="/"} 6.3995695104e+10
 > node_filesystem_free_bytes{device="/dev/sda1",fstype="vfat",mountpoint="/boot/efi"} 5.35801856e+08
 > node_filesystem_free_bytes{device="tmpfs",fstype="tmpfs",mountpoint="/run"} 1.02199296e+08
@@ -43,7 +60,7 @@
 > node_filesystem_free_bytes{device="vagrant",fstype="vboxsf",mountpoint="/vagrant"} 5.5917121536e+10
 > ```
 > Сеть:
-> ```
+> ```bash
 > node_network_receive_bytes_total{device="eth0"} 2.128243e+06
 > node_network_receive_bytes_total{device="lo"} 251220
 > node_network_receive_errs_total{device="eth0"} 0
