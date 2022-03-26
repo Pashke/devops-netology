@@ -21,7 +21,7 @@
 > # создание новой сети 
 > $ yc vpc network create --name net --labels my-label=netology --description "my first network via yc"
 > # создание подсети
-> $ yc vpc network create --name net --labels my-label=netology --description "my first network via yc"
+> $ yc vpc subnet create --name my-subnet-a --zone ru-central1-a --range 10.1.2.0/24 --network-name net --description "my first subnet via yc"
 > ```
 > Новую версию packer скачать можно с облака яндекса (https://hashicorp-releases.website.yandexcloud.net/packer/)  
 > Скаченный файл разархивировал и закинул по пути /usr/bin/  
