@@ -1,0 +1,14 @@
+version: "3.9"
+services:
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: 'db'
+      MYSQL_USER: 'netology'
+      MYSQL_PASSWORD: 'netpass'
+      MYSQL_ROOT_PASSWORD: 'example'
+    volumes:
+         - ./bd:/var/lib/mysql
+         - ./bd_backup:/data/bd_backup
+    ports:
+      - '3306:3306'
