@@ -6,7 +6,9 @@
 > [docker-compose.yml](docker-compose.yml)
 
 Подключитесь к БД PostgreSQL используя `psql`.
-> `psql -h postgres_container -p 5432 -U test`
+> ```
+> psql -h postgres_container -p 5432 -U test
+> ```
 
 Воспользуйтесь командой `\?` для вывода подсказки по имеющимся в `psql` управляющим командам.
 > [ссылочка](https://postgrespro.ru/docs/postgresql/9.6/app-psql) для себя с подробным описанием команд
@@ -77,7 +79,9 @@
 
 Восстановите бэкап БД в `test_database`.
 > Так как создавал в docker compose манифесте своего пользователя, подменил на него в дампе владельца  
-> `psql -U test -W test_database < /data/bd_backup/test_dump.sql`
+> ```
+> psql -U test -W test_database < /data/bd_backup/test_dump.sql
+> ```
 
 Перейдите в управляющую консоль `psql` внутри контейнера.
 
@@ -156,7 +160,9 @@
 ## Задача 4
 
 Используя утилиту `pg_dump` создайте бекап БД `test_database`.
-> `pg_dump -U test test_database > /data/bd_backup/test_db.sql`
+> ```
+> pg_dump -U test test_database > /data/bd_backup/test_db.sql
+> ```
 
 Как бы вы доработали бэкап-файл, чтобы добавить уникальность значения столбца `title` для таблиц `test_database`?
 > Можно добавить `UNIQUE` к столбцу `title`, но есть вероятность, что столбец в дампе неуникален и восстановление 
