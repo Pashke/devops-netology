@@ -20,7 +20,7 @@
 
 В ответе приведите:
 - текст Dockerfile манифеста
-> ```yaml
+> ```dockerfile
 > FROM centos:centos7
 > 
 > RUN yum update -y && yum install -y \
@@ -65,7 +65,7 @@
 - ссылку на образ в репозитории dockerhub
 > https://hub.docker.com/repository/docker/pashke88/centos_elasticsearch
 - ответ `elasticsearch` на запрос пути `/` в json виде
-> ```
+> ```bash
 > $ sudo docker build -t pashke88/centos_elasticsearch .
 > ...
 > Successfully built 45051cfdf560
@@ -129,7 +129,7 @@
 | ind-2 | 1                 | 2               |
 | ind-3 | 2                 | 4               |
 
-> ```
+> ```bash
 > [user_elastic@1d3fec67dbba /]$ curl -ku elastic:B1HWSqWdFz2IEpKnOAVz -X PUT "https://localhost:9200/ind-1?pretty" -H 'Content-Type: application/json' -d'
 > > {
 > >   "settings": {
@@ -146,7 +146,7 @@
 > ```
 
 Получите список индексов и их статусов, используя API и **приведите в ответе** на задание.
->```
+>```bash
 > [user_elastic@1d3fec67dbba /]$ curl -ku elastic:B1HWSqWdFz2IEpKnOAVz -X GET "https://localhost:9200/_cat/indices/"
 > green  open ind-1 h34FKoTYTae0c6cbnmwh-A 1 0 0 0 225b 225b
 > yellow open ind-3 yMgR-FaDQnuf7Gpr2QSr_Q 4 2 0 0 900b 900b
@@ -154,7 +154,7 @@
 >```
 
 Получите состояние кластера `elasticsearch`, используя API.
-> ```
+> ```bash
 > [user_elastic@1d3fec67dbba /]$ curl -ku elastic:B1HWSqWdFz2IEpKnOAVz -X GET "https://localhost:9200/_cluster/health"
 > ```
 > ```json
@@ -181,7 +181,7 @@
 > В нашем случае уменьшать до 0, так как нода одна.
 
 Удалите все индексы.
-> ```
+> ```bash
 > [user_elastic@1d3fec67dbba /]$ curl -ku elastic:B1HWSqWdFz2IEpKnOAVz -X DELETE "https://localhost:9200/ind-1?pretty"
 > {
 >   "acknowledged" : true
@@ -205,12 +205,12 @@
 
 **Приведите в ответе** запрос API и результат вызова API для создания репозитория.
 > Добавляем путь в elasticsearch.yml
-> ```
+> ```bash
 > echo 'path.repo: ["/home/user_elastic/elasticsearch/snapshots"]' >> $ES_PATH_CONF/elasticsearch.yml
 > ```
 > Столкнулся с проблемой перезапуска elasticsearch, даже под рутом не получалось ребутнуть, в итоге перезапустил докер,
 > что выглядит костыльно. Не хватило терпения найти как корректно делать перезапуск.
-> ```
+> ```bash
 > [user_elastic@1d3fec67dbba /]$ curl -ku elastic:B1HWSqWdFz2IEpKnOAVz -X PUT "https://localhost:9200/_snapshot/netology_backup?pretty" -H 'Content-Type: application/json' -d'
 > > {
 > >   "type": "fs",
@@ -225,14 +225,14 @@
 > ```
 
 Создайте индекс `test` с 0 реплик и 1 шардом и **приведите в ответе** список индексов.
-> ```
+> ```bash
 > [user_elastic@1d3fec67dbba /]$ curl -ku elastic:B1HWSqWdFz2IEpKnOAVz -X GET "https://localhost:9200/_cat/indices/"
 > green open test W25hbLwmStuMNrc5ue0Bfg 1 0 0 0 225b 225b
 > ```
 
 [Создайте `snapshot`](https://www.elastic.co/guide/en/elasticsearch/reference/current/snapshots-take-snapshot.html) 
 состояния кластера `elasticsearch`.
-> ```
+> ```bash
 > [user_elastic@1d3fec67dbba snapshots]$ curl -ku elastic:B1HWSqWdFz2IEpKnOAVz -X PUT "https://localhost:9200/_snapshot/netology_backup/%3Cmy_snapshot_%7Bnow%2Fd%7D%3E?pretty"
 > {
 >   "accepted" : true
@@ -240,7 +240,7 @@
 > ```
 
 **Приведите в ответе** список файлов в директории со `snapshot`ами.
-> ```
+> ```bash
 > [user_elastic@1d3fec67dbba /]$ ls -la $ES_HOME/snapshots 
 > total 48
 > drwxrwxr-x 3 user_elastic user_elastic  4096 Apr 24 10:47 .
@@ -252,7 +252,7 @@
 > -rw-r--r-- 1 user_elastic user_elastic   393 Apr 24 10:47 snap-DhUncgqpRbCD9OK3Fr_J2g.dat
 > ```
 Удалите индекс `test` и создайте индекс `test-2`. **Приведите в ответе** список индексов.
-> ```
+> ```bash
 > [user_elastic@1d3fec67dbba /]$ curl -ku elastic:B1HWSqWdFz2IEpKnOAVz -X GET "https://localhost:9200/_cat/indices/"
 > green open test-2 939V9Ek9QP6Ie3unxZu-Jw 1 0 0 0 225b 225b
 > ```
@@ -261,7 +261,7 @@
 кластера `elasticsearch` из `snapshot`, созданного ранее. 
 
 **Приведите в ответе** запрос к API восстановления и итоговый список индексов.
-> ```
+> ```bash
 > [user_elastic@1d3fec67dbba /]$ curl -ku elastic:B1HWSqWdFz2IEpKnOAVz -X GET "https://localhost:9200/_snapshot/netology_backup/*?verbose=false&pretty"
 > {
 >   "snapshots" : [
