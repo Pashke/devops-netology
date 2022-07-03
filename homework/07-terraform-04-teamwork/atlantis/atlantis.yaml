@@ -1,0 +1,24 @@
+# Надо запускать планирование и аплай для двух воркспейсов `stage` и `prod`.
+# Необходимо включить автопланирование при изменении любых файлов `*.tf`.
+version: 3
+projects:
+- dir: .
+  workspace: stage
+  autoplan:
+    when_modified: ["*.tf", "../modules/**/*.tf"]
+    enabled: true
+    workflow: myworkflow
+- dir: .
+  workspace: prod
+  autoplan:
+    when_modified: ["*.tf", "../modules/**/*.tf"]
+    enabled: true
+    workflow: myworkflow
+workflows:
+  myworkflow:
+    plan:
+      steps:
+      - plan
+    apply:
+      steps:
+      - apply

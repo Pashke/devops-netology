@@ -1,0 +1,19 @@
+# Укажите, что атлантис должен работать только для репозиториев в вашем github (или любом другом) аккаунте.
+# На стороне клиентского конфига разрешите изменять `workflow`, то есть для каждого репозитория можно
+# будет указать свои дополнительные команды.
+# В `workflow` используемом по-умолчанию сделайте так, что бы во время планирования не происходил `lock` состояния.
+repos:
+- id: github.com/Pashke/terraform_cloud
+  apply_requirements: [approved]
+  allow_custom_workflows: true
+  workflow: custom
+workflows:
+  custom:
+    plan:
+      steps:
+      - init
+      - plan:
+          extra_args: ["-lock", "false"]
+    apply:
+      steps:
+      - apply
