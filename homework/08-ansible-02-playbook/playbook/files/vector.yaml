@@ -1,0 +1,22 @@
+---
+sources:
+  my_source_id:
+    type: file
+    read_from: beginning
+    include:
+#      - /var/log/**/*.log
+      - /home/ubuntu/test/*
+sinks:
+  my_sink_id:
+    type: clickhouse
+    auth:
+      user: test
+      password: test
+      strategy: basic
+    inputs:
+      - my_source_id
+    database: logs
+    endpoint: http://ip:8123
+    table: table_logs
+    compression: gzip
+    skip_unknown_fields: true

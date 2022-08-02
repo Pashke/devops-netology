@@ -1,0 +1,84 @@
+---
+- name: Install Clickhouse
+  hosts: clickhouse
+  handlers:
+    - name: Start clickhouse service
+      become: true
+      ansible.builtin.service:
+        name: clickhouse-server
+        state: restarted
+  tasks:
+    - block:
+        - name: Get clickhouse distrib
+          ansible.builtin.get_url:
+            url: "https://packages.clickhouse.com/rpm/stable/{{ item }}-{{ clickhouse_version }}.noarch.rpm"
+            dest: "./{{ item }}-{{ clickhouse_version }}.rpm"
+          with_items: "{{ clickhouse_packages }}"
+      rescue:
+        - name: Get clickhouse distrib
+          ansible.builtin.get_url:
+            url: "https://packages.clickhouse.com/rpm/stable/clickhouse-common-static-{{ clickhouse_version }}.x86_64.rpm"
+            dest: "./clickhouse-common-static-{{ clickhouse_version }}.rpm"
+    - name: Install clickhouse packages
+      become: true
+      ansible.builtin.yum:
+        name:
+          - clickhouse-common-static-{{ clickhouse_version }}.rpm
+          - clickhouse-client-{{ clickhouse_version }}.rpm
+          - clickhouse-server-{{ clickhouse_version }}.rpm
+      notify: Start clickhouse service
+    - name: Flush handlers clickhouse
+      ansible.builtin.meta: flush_handlers
+    - name: Pause for 5 sec to start clickhouse
+      ansible.builtin.pause:
+        seconds: 5
+    - name: Create database
+      ansible.builtin.command: "clickhouse-client -q 'create database logs;'"
+      register: create_db
+      failed_when: create_db.rc != 0 and create_db.rc !=82
+      changed_when: create_db.rc == 0
+    - name: Create table
+      ansible.builtin.command: "clickhouse-client -q 'create table logs.table_logs (file String, host String, message String, timestamp DateTime) ENGINE = Log;'"
+      register: create_table
+      failed_when: create_table.rc != 0 and create_table.rc !=57
+      changed_when: create_table.rc == 0
+    - name: Copy file myuser.xml
+      become: true
+      ansible.builtin.copy:
+        src: myuser.xml
+        dest: /etc/clickhouse-server/users.d/myuser.xml
+        mode: '0644'
+      notify: Start clickhouse service
+    - name: Setting ip for access
+      become: true
+      ansible.builtin.lineinfile:
+        path: /etc/clickhouse-server/config.xml
+        regexp: '<\!-- <listen_host>::<\/listen_host> -->'
+        line: '<listen_host>::</listen_host>'
+      notify: Start clickhouse service
+
+- name: Install Vector
+  hosts: vector
+  handlers:
+    - name: Start vector service
+      become: true
+      ansible.builtin.service:
+        name: vector
+        state: restarted
+  tasks:
+    - name: Get vector distrib
+      ansible.builtin.get_url:
+        url: "https://packages.timber.io/vector/{{ vector_version }}/vector_{{ vector_version }}-1_amd64.deb"
+        dest: "./vector.deb"
+    - name: Install vector package
+      become: true
+      ansible.builtin.apt:
+        deb: vector.deb
+      notify: Start vector service
+    - name: Copy file vector.yaml
+      become: true
+      ansible.builtin.copy:
+        src: vector.yaml
+        dest: /etc/vector/vector.yaml
+        mode: '0644'
+      notify: Start vector service
